@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: algoladder-portal
+    env: node
+    region: oregon          # change to frankfurt for lower latency from Nigeria if available
+    plan: free
+    buildCommand: npm install
+    startCommand: node server.js
+    healthCheckPath: /health
+    envVars:
+      - key: SUPABASE_URL
+        sync: false          # enter value in Render dashboard — never commit to git
+      - key: SUPABASE_SERVICE_KEY
+        sync: false          # enter value in Render dashboard — never commit to git
+      - key: ADMIN_PIN
+        sync: false          # set your chosen PIN in Render dashboard
+      - key: NODE_ENV
+        value: production
