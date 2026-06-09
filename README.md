@@ -147,9 +147,8 @@ npm run dev
 
 ## Extending to a multi-study portal
 
-The current schema stores one session per participant per matric number.
-To support multiple studies or instruments per participant, add a `study_id`
+The Backup schema stores one session per participant per matric number. The current version now support multiple studies or instruments per participant, adding  a `study_id`
 column to the participants table and include it in enrolment requests.
-The frontend can then pass a study identifier (e.g. `algoladder_2025`)
+The frontend can then pass a study identifier (e.g. `algoladder_2026`)
 to scope sessions correctly, allowing the same participant to enrol in
 multiple studies without matric collisions.
