@@ -1,6 +1,6 @@
 # AlgoLadder Research Portal — Deployment Guide
 
-A lightweight research participation API for the AlgoLadder bilingual
+A lightweight multistudy research participation portal including the AlgoLadder bilingual
 computational thinking study. Runs on Render's free tier with Supabase
 as the database. Total deployment time: approximately 20 minutes.
 
