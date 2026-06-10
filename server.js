@@ -9,6 +9,13 @@
 
 'use strict';
 require('dotenv').config();
+
+// FIX 1: Force IPv4 globally
+const dns = require('dns');
+if (dns.setDefaultResultOrder) {
+  dns.setDefaultResultOrder('ipv4first');
+}
+
 const express = require('express');
 const cors = require('cors');
 const session = require('express-session');
@@ -46,6 +53,12 @@ const sessionPool = new pg.Pool({
   ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
   family: 4  // Force IPv4 – fixes ENETUNREACH on Render
 });
+
+// FIX 3: Prevent crash if DB connection drops
+sessionPool.on('error', (err) => {
+  console.error('PG Pool Error:', err.code);
+});
+
 app.use(session({
   store: new pgSession({
     pool: sessionPool,
@@ -74,6 +87,8 @@ const sb = createClient(
   process.env.SUPABASE_SERVICE_KEY,
   { auth: { persistSession: false } }
 );
+
+// ... rest of your code stays the same
 
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123';
 function isAdminLoggedIn(req) {
