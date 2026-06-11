@@ -444,16 +444,21 @@ app.get('/api/admin/status', requireAdmin, async (req, res) => {
 app.get('/api/admin/export/study/:studyId', requireAdmin, async (req, res) => {
   const { studyId } = req.params;
   const { data, error } = await sb
-    .from('enrolments')
-    .select(`*, participant:participant_id (name, matric, participant_code, demographics, lang, academic_session, class_section, lecturer_id)`)
-    .eq('study_id', studyId);
+app.get('/api/admin/export/study/:studyId', requireAdmin, async (req, res) => {
+  const { studyId } = req.params;
+  const { data, error } = await sb
+   .from('enrolments')
+   .select(`*, participant:participant_id (name, matric, participant_code, demographics, lang, academic_session, class_section, lecturer_id)`)
+   .eq('study_id', studyId);
+
   if (error) return res.status(500).json({ error: error.message });
+
   const flatten = (obj, prefix = '') => {
     let result = {};
     for (let key in obj) {
       if (obj.hasOwnProperty(key)) {
-        const newKey = prefix ? `${prefix}_${key}` : key;
-        if (typeof obj[key] === 'object' && obj[key] !== null && !Array.isArray(obj[key])) {
+        const newKey = prefix? `${prefix}_${key}` : key;
+        if (typeof obj[key] === 'object' && obj[key]!== null &&!Array.isArray(obj[key])) {
           Object.assign(result, flatten(obj[key], newKey));
         } else {
           result[newKey] = obj[key];
@@ -462,12 +467,16 @@ app.get('/api/admin/export/study/:studyId', requireAdmin, async (req, res) => {
     }
     return result;
   };
-  const rows = data.map(enrol => flatten({ enrolment, participant: enrol.participant }));
-  const headers = rows.length ? Object.keys(rows[0]) : [];
+
+  // FIXED: Changed 'enrolment' to 'enrolment: enrol'
+  const rows = data.map(enrol => flatten({ enrolment: enrol, participant: enrol.participant }));
+
+  const headers = rows.length? Object.keys(rows[0]) : [];
   const csvRows = [
     headers.join(','),
-    ...rows.map(row => headers.map(h => `"${String(row[h] ?? '').replace(/"/g, '""')}"`).join(','))
+   ...rows.map(row => headers.map(h => `"${String(row[h]?? '').replace(/"/g, '""')}"`).join(','))
   ];
+
   res.setHeader('Content-Type', 'text/csv');
   res.setHeader('Content-Disposition', `attachment; filename="study_${studyId}_export.csv"`);
   res.send(csvRows.join('\n'));
