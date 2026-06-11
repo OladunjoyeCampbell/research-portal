@@ -444,9 +444,6 @@ app.get('/api/admin/status', requireAdmin, async (req, res) => {
 app.get('/api/admin/export/study/:studyId', requireAdmin, async (req, res) => {
   const { studyId } = req.params;
   const { data, error } = await sb
-app.get('/api/admin/export/study/:studyId', requireAdmin, async (req, res) => {
-  const { studyId } = req.params;
-  const { data, error } = await sb
    .from('enrolments')
    .select(`*, participant:participant_id (name, matric, participant_code, demographics, lang, academic_session, class_section, lecturer_id)`)
    .eq('study_id', studyId);
